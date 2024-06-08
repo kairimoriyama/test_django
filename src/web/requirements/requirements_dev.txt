@@ -1,0 +1,12 @@
+django==5
+djangorestframework
+django-allauth
+django-allauth[socialaccount]
+datetime
+requests
+django-qr-code
+pandas
+numpy
+gunicorn
+django-environ
+# python-psycopg2

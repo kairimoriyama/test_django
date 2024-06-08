@@ -1,0 +1,45 @@
+name: test
+services:
+
+  django:
+    image: test-dev-django
+    build:
+      context: . # docker buildコマンドを実行した場所
+      dockerfile: ./web/Docker/Dockerfile.dev # Dockerfileのディレクトリ
+    volumes:
+      - './web:/code/web' # マウント
+
+    ports:
+      - 8000:8000 # 左側が外部からのアクセス時のポート番号:右側がdockerコンテナからアクセスする時のポート番号 
+      # ホストの8000番からコンテナの8000番へポートフォワード
+
+    container_name: test_dev_django
+    stdin_open: true
+    tty: true # ポート待受とかしていないコンテナの場合、trueに設定しておくとコンテナが起動を継続
+    working_dir: '/code/web'
+
+
+    # コンテナに入る
+    # docker exec -it test_dev_django bash
+
+    # プロジェクト作成
+    # django-admin startproject config web
+    # cd web
+    # python3 manage.py startapp  user（←アプリ名）
+
+    # マイグレーション --settings=config.settings.dev
+    # python3 manage.py makemigrations --settings=config.settings.dev
+    # python3 manage.py migrate --settings=config.settings.dev
+
+    # adminユーザー設定 --settings=config.settings.dev
+    # python3 manage.py createsuperuser --settings=config.settings.dev
+
+    # 起動
+    # python3 manage.py runserver  0.0.0.0:8000 --settings=config.settings.dev
+    # http://127.0.0.1:8000/
+    
+
+# docker-compose -f docker-compose-dev.yml up -d  && docker exec -it test_dev_django bash
+
+
+

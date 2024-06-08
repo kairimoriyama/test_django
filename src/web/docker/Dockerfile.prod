@@ -1,0 +1,28 @@
+FROM python:3.10
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir /code
+WORKDIR /code
+
+
+# Install dependencies
+COPY requirements/ /code/requirements/
+
+RUN apt-get update
+RUN pip3 install --upgrade pip
+RUN pip install --no-cache-dir -r requirements/requirements_prod.txt
+
+# nginx設定 # RUN apt-get -y install nginx
+# RUN apt-get install nginx 
+# RUN service nginx start
+# COPY ./nginx/nginx_django.conf /etc/nginx/sites-available/nginx_django
+# RUN ln -s /etc/nginx/sites-available/nginx_django /etc/nginx/sites-enabled
+# RUN service nginx reload
+
+# Copy project
+COPY . /code/
+
+# Command to run the application
+RUN python manage.py collectstatic --settings=config.settings.prod
+RUN gunicorn --bind 0.0.0.0:8000 config.wsgi:application -D

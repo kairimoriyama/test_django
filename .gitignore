@@ -1,0 +1,13 @@
+*.log
+*.pyc
+__pycache__/
+db-volumes/
+db.sqlite3
+
+# django migration ファイル
+src/*/apps/*/migrations/*
+!__init__.py
+
+venv/
+logs/
+

@@ -1,0 +1,153 @@
+name: test_prod
+services:
+
+  db:
+    build:
+      context: ./db # docker buildコマンドを実行した場所
+      dockerfile: docker/Dockerfile # Dockerfileのディレクトリ
+    container_name: test_prod_db
+    ports: 
+      - "5432:5432"
+
+    # restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+    volumes:
+       - postgres_data:/var/lib/postgresql/data/
+
+    # healthcheck:
+    #   test: pg_isready -d postgres -U postgres
+
+    networks:
+      - backend
+
+  # コンテナに入る
+  # docker exec -it test_prod_db bash
+
+
+
+  web:
+    build:
+      context: ./web # docker buildコマンドを実行した場所
+      dockerfile: docker/Dockerfile.prod # Dockerfileのディレクトリ
+    container_name: test_prod_web
+
+    volumes:
+      - './web:/code' # マウント
+      - 'django_static_data:/opt/static/' # マウント
+      - 'django_media_data:/opt/media/' # マウント
+
+    ports:
+      - "8000:8000" 
+
+    # expose:
+    #   - "8000" # 8000番ポートをNginx側が接続
+
+    stdin_open: true
+    tty: true # ポート待受とかしていないコンテナの場合、trueに設定しておくとコンテナが起動を継続
+
+    depends_on:
+      - db
+
+    networks:
+      - backend
+      - frontend
+    
+    # コンテナに入る
+    # docker exec -it test_prod_web bash
+
+    # マイグレーション --settings=config.settings.prod
+    # python3 manage.py makemigrations --settings=config.settings.prod
+    # python3 manage.py migrate --settings=config.settings.prod
+
+    # adminユーザー設定 --settings=config.settings.prod
+    # python3 manage.py createsuperuser --settings=config.settings.prod
+
+    # 起動
+    # python3 manage.py runserver  0.0.0.0:8000 --settings=config.settings.prod
+    # http://127.0.0.1:8000/
+    # gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+
+    # collectstatic
+    # python3 manage.py collectstatic --settings=config.settings.prod
+
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: docker/Dockerfile # Dockerfileのディレクトリ
+    container_name: test_prod_nginx
+    
+    volumes:
+      - "./nginx/config/nginx.conf:/etc/nginx/nginx.conf"
+      - 'django_static_data:/opt/static/' # マウント
+      - 'django_media_data:/opt/media/' # マウント
+
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+    networks:
+      - frontend
+
+    # コンテナに入る
+    # docker exec -it test_prod_nginx bash
+  
+    # nginx -t
+
+    # apt-get update
+    # apt install -y procps
+    # ps ax | grep nginx
+
+    # apt-get update
+    # apt-get install lsof
+    # lsof -i:80
+
+  adminer:
+    image: adminer:latest
+    container_name: test_prod_adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+  # http://127.0.0.1:8080/
+
+
+volumes:
+  postgres_data:
+  django_static_data:
+  django_media_data:
+
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.20.0/24
+
+# docker-compose -f docker-compose-prod.yml up -d 
+
+# エラー対応 Exited
+# # Exited コンテナをイメージ化
+# $ docker commit {{コンテナID}} {{適当な名前}}
+# # コンテナにbashで入る
+# $ docker run --rm -it {{上でつけた名前}} bash
+
+# # vim
+# apt-get update
+# apt-get install vim
+# 抜ける 保存なし :q!
+# 抜ける 保存あり :wq

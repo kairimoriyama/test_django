@@ -9,5 +9,5 @@ src/*/apps/*/migrations/*
 !__init__.py
 
 venv/
-logs/
+logs/*
 

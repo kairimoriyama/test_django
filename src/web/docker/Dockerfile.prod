@@ -13,13 +13,6 @@ RUN apt-get update
 RUN pip3 install --upgrade pip
 RUN pip install --no-cache-dir -r requirements/requirements_prod.txt
 
-# nginx設定 # RUN apt-get -y install nginx
-# RUN apt-get install nginx 
-# RUN service nginx start
-# COPY ./nginx/nginx_django.conf /etc/nginx/sites-available/nginx_django
-# RUN ln -s /etc/nginx/sites-available/nginx_django /etc/nginx/sites-enabled
-# RUN service nginx reload
-
 # Copy project
 COPY . /code/
 

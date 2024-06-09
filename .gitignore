@@ -9,8 +9,5 @@ src/web/apps/*/migrations/*
 !__init__.py
 
 
-# django log ファイル
-src/web/logs/*
-
 venv/
 

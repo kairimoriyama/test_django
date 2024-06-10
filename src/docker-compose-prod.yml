@@ -87,7 +87,7 @@ services:
       - 'web_static_data:/usr/share/nginx/html/static' # マウント
       - 'web_media_data:/usr/share/nginx/html/media' # マウント
 
-      
+
     restart: always
     ports:
       - "80:80"
@@ -121,9 +121,9 @@ services:
 
 
 volumes:
-  postgres_data:
-  django_static_data:
-  django_media_data:
+  db_data:
+  web_static_data:
+  web_media_data:
 
 
 networks:

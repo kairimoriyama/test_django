@@ -36,15 +36,16 @@ services:
     container_name: test_prod_web
 
     volumes:
-      - './web:/code' # マウント
-      - 'django_static_data:/opt/static/' # マウント
-      - 'django_media_data:/opt/media/' # マウント
+      - "./nginx/config/nginx.conf:/etc/nginx/nginx.conf"
+      - 'web_static_data:/usr/share/nginx/html/static' # マウント
+      - 'web_media_data:/usr/share/nginx/html/media' # マウント
+
 
     ports:
       - "8000:8000" 
 
-    # expose:
-    #   - "8000" # 8000番ポートをNginx側が接続
+    expose:
+      - "8000" # 8000番ポートをNginx側が接続
 
     stdin_open: true
     tty: true # ポート待受とかしていないコンテナの場合、trueに設定しておくとコンテナが起動を継続
@@ -83,9 +84,10 @@ services:
     
     volumes:
       - "./nginx/config/nginx.conf:/etc/nginx/nginx.conf"
-      - 'django_static_data:/opt/static/' # マウント
-      - 'django_media_data:/opt/media/' # マウント
+      - 'web_static_data:/usr/share/nginx/html/static' # マウント
+      - 'web_media_data:/usr/share/nginx/html/media' # マウント
 
+      
     restart: always
     ports:
       - "80:80"

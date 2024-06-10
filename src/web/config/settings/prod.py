@@ -7,9 +7,9 @@ ALLOWED_HOSTS = list(env("ALLOWED_HOSTS"))
 
 
 # where collectstatic will collect static files for deployment
-STATIC_ROOT = '/opt/static' #ボリュームマウント先のパス
+STATIC_ROOT = '/usr/share/nginx/html/static' #ボリュームマウント先のパス
 # user-uploaded files.
-MEDIA_ROOT = '/opt/media' #ボリュームマウント先のパス
+MEDIA_ROOT = '/usr/share/nginx/html/media' #ボリュームマウント先のパス
 
 DATABASES = {
     'default': {
